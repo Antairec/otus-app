@@ -40,52 +40,70 @@
 
 Каталоги сервисов содержат файлы, необходимые для их контейнеризации. Резервные копии сохраняются в каталог `backups/`.
 
-### Bash-скрипты
+### Запуск приложения
 
-| Скрипт | Назначение |
-| --- | --- |
-| `deploy_with_build_and_expose_ports.sh` | Собирает Docker-образы из Dockerfile, запускает все четыре контейнера и **публикует порты контейнеров на хосте**. |
-| `deploy_with_docker_images_and_expose_ports.sh` | Запускает приложение и базу данных из **готовых Docker-образов** с **публикацией портов на хосте**. |
-| `deploy_with_docker_images.sh` | Запускает приложение и базу данных из **готовых Docker-образов**; публикует веб-интерфейс на порту **80**, оставляя порты API и PostgreSQL доступными только внутри Docker-сети. |
-| `backup_all_data.sh` | Создаёт резервные копии данных PostgreSQL и Docker-томов API в каталоге `backups/`. |
-| `destroy_infrastructure.sh` | Удаляет развёрнутую инфраструктуру. |
+**Требования:** Docker Engine; Docker Compose — для второго способа.
 
-**Примечание:** API и PostgreSQL могут взаимодействовать с другими контейнерами внутри Docker-сети без публикации своих портов на хосте.
-
-### Запуск и управление
-
-**Требования:** Docker Engine. Docker Compose — для использования `docker-compose.yml`.
-
-**Сборка образов и развёртывание с публикацией портов:**
+Клонировать репозиторий и перейти в каталог проекта:
 
 ```bash
-bash deploy_with_build_and_expose_ports.sh
+git clone https://github.com/Antairec/otus-app.git
+cd otus-app
 ```
 
-**Развёртывание из готовых образов с публикацией портов:**
+#### Вариант 1. Bash-скрипты
+
+**Собрать Docker-образы и запустить контейнеры с публикацией портов:**
 
 ```bash
-bash deploy_with_docker_images_and_expose_ports.sh
+./deploy_with_build_and_expose_ports.sh
 ```
 
-**Развёртывание из готовых образов с публикацией только веб-интерфейса:**
+**Запустить контейнеры из готовых образов с публикацией портов:**
 
 ```bash
-bash deploy_with_docker_images.sh
+./deploy_with_docker_images_and_expose_ports.sh
 ```
 
-**Резервное копирование:**
+**Запустить контейнеры из готовых образов с публикацией только веб-интерфейса:**
 
 ```bash
-bash backup_all_data.sh
+./deploy_with_docker_images.sh
 ```
 
-**Удаление инфраструктуры:**
+**Резервное копирование данных PostgreSQL и Docker-томов API в `backups/`:**
 
 ```bash
-bash destroy_infrastructure.sh
+./backup_all_data.sh
 ```
 
+**Удаление развёрнутой инфраструктуры:**
+
+```bash
+./destroy_infrastructure.sh
+```
+
+#### Вариант 2. Docker Compose
+
+**Запуск приложения:**
+
+```bash
+docker compose up -d
+```
+
+**Проверка состояния контейнеров:**
+
+```bash
+docker compose ps
+```
+
+**Остановка и удаление контейнеров:**
+
+```bash
+docker compose down
+```
+
+`docker-compose.yml` использует файл `nginx.conf` из корня проекта.
 
 ### Доступ к приложению
 
@@ -144,52 +162,70 @@ The stack therefore consists of **three application containers and one PostgreSQ
 
 The service directories contain the files required to containerize each component. Backups are stored in the `backups/` directory.
 
-### Bash Scripts
+### Running the Application
 
-| Script | Purpose |
-| --- | --- |
-| `deploy_with_build_and_expose_ports.sh` | Builds Docker images from Dockerfiles, starts all four containers, and **publishes container ports on the host**. |
-| `deploy_with_docker_images_and_expose_ports.sh` | Deploys the application and database from **prebuilt Docker images**, **publishing ports on the host**. |
-| `deploy_with_docker_images.sh` | Deploys the application and database from **prebuilt Docker images**; publishes the web interface on port **80**, while API and PostgreSQL ports remain accessible only within the Docker network. |
-| `backup_all_data.sh` | Backs up PostgreSQL data and API Docker volumes to `backups/`. |
-| `destroy_infrastructure.sh` | Tears down the deployed infrastructure. |
+**Requirements:** Docker Engine; Docker Compose for the second option.
 
-**Note:** The APIs and PostgreSQL can communicate with other containers over the Docker network without publishing their ports to the host.
-
-### Usage
-
-**Prerequisites:** Docker Engine. Docker Compose is needed to use `docker-compose.yml`.
-
-**Build images and deploy with published ports:**
+Clone the repository and enter the project directory:
 
 ```bash
-bash deploy_with_build_and_expose_ports.sh
+git clone https://github.com/Antairec/otus-app.git
+cd otus-app
 ```
 
-**Deploy prebuilt images with published ports:**
+#### Option 1. Bash Scripts
+
+**Build Docker images and start the containers with published ports:**
 
 ```bash
-bash deploy_with_docker_images_and_expose_ports.sh
+./deploy_with_build_and_expose_ports.sh
 ```
 
-**Deploy prebuilt images with only the web interface published:**
+**Start containers from prebuilt images with published ports:**
 
 ```bash
-bash deploy_with_docker_images.sh
+./deploy_with_docker_images_and_expose_ports.sh
 ```
 
-**Back up data:**
+**Start containers from prebuilt images with only the web interface port published:**
 
 ```bash
-bash backup_all_data.sh
+./deploy_with_docker_images.sh
 ```
 
-**Tear down the infrastructure:**
+**Back up PostgreSQL data and API Docker volumes to `backups/`:**
 
 ```bash
-bash destroy_infrastructure.sh
+./backup_all_data.sh
 ```
 
+**Remove the deployed infrastructure:**
+
+```bash
+./destroy_infrastructure.sh
+```
+
+#### Option 2. Docker Compose
+
+**Start the application:**
+
+```bash
+docker compose up -d
+```
+
+**Check container status:**
+
+```bash
+docker compose ps
+```
+
+**Stop and remove containers:**
+
+```bash
+docker compose down
+```
+
+`docker-compose.yml` uses the `nginx.conf` file from the project root.
 
 ### Application Access
 

@@ -51,12 +51,7 @@ services:
   dashboard-ui:
     container_name: dashboard-ui-1-c
     image: antairec/dashboard-ui:latest
-    restart: unless-stopped
-    volumes:
-      - type: bind
-        source: ./nginx.conf
-        target: /etc/nginx/conf.d/default.conf
-        read_only: true
+    restart: unless-stopped    
     depends_on:
       - users-api
       - documents-api

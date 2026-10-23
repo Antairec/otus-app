@@ -46,11 +46,11 @@
 | --- | --- |
 | `deploy_with_build_and_expose_ports.sh` | Собирает Docker-образы из Dockerfile, запускает все четыре контейнера и **публикует порты контейнеров на хосте**. |
 | `deploy_with_docker_images_and_expose_ports.sh` | Запускает приложение и базу данных из **готовых Docker-образов** с **публикацией портов на хосте**. |
-| `deploy_with_docker_images.sh` | Запускает приложение и базу данных из **готовых Docker-образов**, но **без публикации портов на хосте**. |
+| `deploy_with_docker_images.sh` | Запускает приложение и базу данных из **готовых Docker-образов**; публикует веб-интерфейс на порту **80**, оставляя порты API и PostgreSQL доступными только внутри Docker-сети. |
 | `backup_all_data.sh` | Создаёт резервные копии данных PostgreSQL и Docker-томов API в каталоге `backups/`. |
 | `destroy_infrastructure.sh` | Удаляет развёрнутую инфраструктуру. |
 
-**Примечание:** отсутствие опубликованных портов не означает, что контейнеры не могут взаимодействовать друг с другом внутри Docker-сети.
+**Примечание:** API и PostgreSQL могут взаимодействовать с другими контейнерами внутри Docker-сети без публикации своих портов на хосте.
 
 ### Запуск и управление
 
@@ -68,7 +68,7 @@ bash deploy_with_build_and_expose_ports.sh
 bash deploy_with_docker_images_and_expose_ports.sh
 ```
 
-**Развёртывание из готовых образов без публикации портов:**
+**Развёртывание из готовых образов с публикацией только веб-интерфейса:**
 
 ```bash
 bash deploy_with_docker_images.sh
@@ -87,13 +87,20 @@ bash destroy_infrastructure.sh
 ```
 
 
+### Доступ к приложению
+
+| Способ запуска | Адрес |
+| --- | --- |
+| `deploy_*.sh` | `http://<IP-сервера>:80` |
+| `docker compose up -d` | `http://<IP-сервера>:81` |
+
 ### Что реализовано
 
 - Контейнеризация микросервисного приложения с помощью четырёх Dockerfile.
 - Сборка и публикация образов в Docker Registry.
 - Автоматизация развёртывания Bash-скриптами.
 - Два способа развёртывания: с локальной сборкой или с готовыми образами.
-- Запуск с публикацией портов и без неё.
+- Различные схемы публикации портов: порты сервисов либо только порт веб-интерфейса.
 - Резервное копирование данных PostgreSQL и Docker-томов API.
 - Автоматизированное удаление инфраструктуры.
 
@@ -143,11 +150,11 @@ The service directories contain the files required to containerize each componen
 | --- | --- |
 | `deploy_with_build_and_expose_ports.sh` | Builds Docker images from Dockerfiles, starts all four containers, and **publishes container ports on the host**. |
 | `deploy_with_docker_images_and_expose_ports.sh` | Deploys the application and database from **prebuilt Docker images**, **publishing ports on the host**. |
-| `deploy_with_docker_images.sh` | Deploys the application and database from **prebuilt Docker images**, **without publishing ports on the host**. |
+| `deploy_with_docker_images.sh` | Deploys the application and database from **prebuilt Docker images**; publishes the web interface on port **80**, while API and PostgreSQL ports remain accessible only within the Docker network. |
 | `backup_all_data.sh` | Backs up PostgreSQL data and API Docker volumes to `backups/`. |
 | `destroy_infrastructure.sh` | Tears down the deployed infrastructure. |
 
-**Note:** Containers can still communicate over their Docker network even when their ports are not published to the host.
+**Note:** The APIs and PostgreSQL can communicate with other containers over the Docker network without publishing their ports to the host.
 
 ### Usage
 
@@ -165,7 +172,7 @@ bash deploy_with_build_and_expose_ports.sh
 bash deploy_with_docker_images_and_expose_ports.sh
 ```
 
-**Deploy prebuilt images without published ports:**
+**Deploy prebuilt images with only the web interface published:**
 
 ```bash
 bash deploy_with_docker_images.sh
@@ -184,13 +191,20 @@ bash destroy_infrastructure.sh
 ```
 
 
+### Application Access
+
+| Deployment method | URL |
+| --- | --- |
+| `deploy_*.sh` | `http://<server-ip>:80` |
+| `docker compose up -d` | `http://<server-ip>:81` |
+
 ### What This Project Demonstrates
 
 - Containerizing a microservices application with four Dockerfiles.
 - Building and publishing images to a Docker registry.
 - Automating deployment using Bash scripts.
 - Deploying from local builds or prebuilt images.
-- Running containers with or without published host ports.
+- Configuring different port publishing options: service ports or only the web interface port.
 - Backing up PostgreSQL data and API Docker volumes.
 - Automating infrastructure teardown.
 

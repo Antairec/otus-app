@@ -1,0 +1,73 @@
+services:
+  postgres-db:
+    container_name: postgres-db-1-c
+    image: antairec/postgres-db:latest
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=p123
+      - POSTGRES_DB=postgres
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 30s
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        source: postgres-data-c
+        target: /var/lib/postgresql/data
+    networks:
+      - otus-net-c
+  
+  users-api:
+    container_name: users-api-1-c
+    image: antairec/users-api:latest
+    restart: unless-stopped
+    environment:
+      DATABASE_HOST: postgres-db-1-c
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+    networks:
+      - otus-net-c
+  
+  documents-api:
+    container_name: documents-api-1-c
+    image: antairec/documents-api:latest
+    restart: unless-stopped
+    environment:
+      DATABASE_HOST: postgres-db-1-c
+    volumes:
+      - type: volume
+        source: documents-uploads-c
+        target: /app/uploads/img
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+    networks:
+      - otus-net-c
+
+  dashboard-ui:
+    container_name: dashboard-ui-1-c
+    image: antairec/dashboard-ui:latest
+    restart: unless-stopped
+    volumes:
+      - type: bind
+        source: ./nginx.conf
+        target: /etc/nginx/conf.d/default.conf
+        read_only: true
+    depends_on:
+      - users-api
+      - documents-api
+    networks:
+      - otus-net-c
+    ports:
+      - "81:80"
+    
+volumes:
+  postgres-data-c:
+  documents-uploads-c:
+
+networks:
+  otus-net-c:
